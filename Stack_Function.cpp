@@ -216,8 +216,8 @@ void StackDump(const Stack *stack_ptr, INFO_STACK) {
         "************************************************************\n");
 
         fprintf(inf_st->File, "Stack <%s> (OK) [%p]\n", type_str(Stack_t), stack_ptr);
-        fprintf(inf_st->File, "\t\tIn file : %s\n", __FILE__);
-        fprintf(inf_st->File, "\t\tFunction: %s\n", __func__);
+        fprintf(inf_st->File, "\t\tIn file : %s\n",  __FILE__);
+        fprintf(inf_st->File, "\t\tFunction: %s\n",  __func__);
         fprintf(inf_st->File, "\t\tLine    : %d\n",  __LINE__);
         fprintf(inf_st->File, "\t\tSize    : %d\n",  stack_ptr->size);
         fprintf(inf_st->File, "\t\tCapacity: %d\n",  stack_ptr->capacity);
@@ -241,37 +241,37 @@ void StackDump(const Stack *stack_ptr, INFO_STACK) {
 
         switch(inf_st->error) {
             case MEM_ERROR:
-                CASE(MEM_ERROR)
+                CASE(str(MEM_ERROR))
                 break;
             case REALLOC_ERROR:
-                CASE(REALLOC_ERROR)
+                CASE(str(REALLOC_ERROR))
                 break;
             case NOT_MEM_STACK:
-                CASE(NOT_MEM_STACK)
+                CASE(str(NOT_MEM_STACK))
                 break;
             case NULL_SIZE_CAPACITY:
-                CASE(NULL_SIZE_CAPACITY)
+                CASE(str(NULL_SIZE_CAPACITY))
                 break;
             case NEGATIVE_SIZE_STACK:
-                CASE(NEGATIVE_SIZE_STACK)
+                CASE(str(NEGATIVE_SIZE_STACK))
                 break;
             case INVALID_PTR_STACK:
-                CASE(INVALID_PTR_STACK)
+                CASE(str(INVALID_PTR_STACK))
                 break;
             case INVALID_PTR:
-                CASE(INVALID_PTR)
+                CASE(str(INVALID_PTR))
                 break;
             case INVALID_PTR_DATA:
-                CASE(INVALID_PTR_DATA)
+                CASE(str(INVALID_PTR_DATA))
                 break;
             case CAPACITY_LOW_THEN_SIZE:
-                CASE(CAPACITY_LOW_THEN_SIZE)
+                CASE(str(CAPACITY_LOW_THEN_SIZE))
                 break;
             case FAILED_PTR:
-                CASE(FAILED_PTR)
+                CASE(str(FAILED_PTR))
                 break;
             default: 
-                CASE(NO_ERROR)
+                CASE(str(NO_ERROR))
         }
     }
 }

@@ -36,9 +36,9 @@
 #define CASE(ERROR) fprintf(inf_st->File, "\n******************************"                        \
         "************************************************************\n");                          \
                                                                                                     \
-        fprintf(inf_st->File, "Stack <%s> (ERROR: ) [%p]\n", type_str(Stack_t), stack_ptr);         \
-        fprintf(inf_st->File, "\t\tIn file : %s\n", __FILE__);                                      \
-        fprintf(inf_st->File, "\t\tFunction: %s\n", __func__);                                      \
+        fprintf(inf_st->File, "Stack <%s> (ERROR: %s) [%p]\n", type_str(Stack_t), ERROR, stack_ptr);\
+        fprintf(inf_st->File, "\t\tIn file : %s\n",  __FILE__);                                     \
+        fprintf(inf_st->File, "\t\tFunction: %s\n",  __func__);                                     \
         fprintf(inf_st->File, "\t\tLine    : %d\n",  __LINE__);                                     \
         fprintf(inf_st->File, "\t\tSize    : %d\n",  stack_ptr->size);                              \
         fprintf(inf_st->File, "\t\tCapacity: %d\n",  stack_ptr->capacity);                          \
