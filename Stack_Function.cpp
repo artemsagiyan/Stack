@@ -202,8 +202,9 @@ int IsReadBadPtr(Stack_t *ptr) {
 }
 
 void PrintCanary(const Stack *stack_ptr, INFO_STACK, int canary) {
-    fprintf(inf_st->File, "\t\t\t\t*[C_1] = %d (CANARY)\n", stack_ptr->stack_front_canary[0]);
-    fprintf(inf_st->File, "\t\t\t\t*[C_2] = %d (CANARY)\n", stack_ptr->stack_back_canary[0]);
+    fprintf(inf_st->File, "\t\t\t*[C_1] = %d (CANARY)\n", stack_ptr->stack_front_canary[0]);
+    fprintf(inf_st->File, "\t\t\t*[C_2] = %d (CANARY)\n", stack_ptr->stack_back_canary[0]);
+    fprintf(inf_st->File, "\n");
 }
 
 void StackDump(const Stack *stack_ptr, INFO_STACK) {
@@ -224,6 +225,9 @@ void StackDump(const Stack *stack_ptr, INFO_STACK) {
         fprintf(inf_st->File, "\t\tData [%p]\n\n" ,  stack_ptr->data);
 
         fprintf(inf_st->File, "\t\tElements:\n");   
+
+        if (stack_ptr->size == 0)
+            fprintf(inf_st->File, "\t\tThere aren't elements\n");
 
         for (int i = 0; i < stack_ptr->size; ++i) {
             FPrintElem(stack_ptr->size, i, stack_ptr->data[i], inf_st->File);
