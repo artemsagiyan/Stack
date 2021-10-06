@@ -44,7 +44,7 @@
         fprintf(inf_st->File, "\t\tCapacity: %d\n",  stack_ptr->capacity);                          \
         fprintf(inf_st->File, "\t\tData [%p]\n\n" ,  stack_ptr->data);                              \
                                                                                                     \
-        fprintf(inf_st->File, "\t\t\t\tElements:\n");                                               \
+        fprintf(inf_st->File, "\t\tElements:\n");                                               \
                                                                                                     \
                 for (int i = 0; i <= stack_ptr->size; ++i) {                                        \
                     FPrintElem(stack_ptr->capacity, i, stack_ptr->data[i], inf_st->File);           \

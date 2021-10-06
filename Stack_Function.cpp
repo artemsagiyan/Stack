@@ -146,7 +146,7 @@ void PrintElem(char elem) {
 
 void FPrintElem(int size, int num, int elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
-    fprintf(file, "\t\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -157,7 +157,7 @@ void FPrintElem(int size, int num, int elem, FILE *file) {
 void FPrintElem(int size, int num, double elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
     
-    fprintf(file, "\t\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -167,7 +167,7 @@ void FPrintElem(int size, int num, double elem, FILE *file) {
 
 void FPrintElem(int size, int num, char elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
-    fprintf(file, "\t\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -223,7 +223,7 @@ void StackDump(const Stack *stack_ptr, INFO_STACK) {
         fprintf(inf_st->File, "\t\tCapacity: %d\n",  stack_ptr->capacity);
         fprintf(inf_st->File, "\t\tData [%p]\n\n" ,  stack_ptr->data);
 
-        fprintf(inf_st->File, "\t\t\t\tElements:\n");   
+        fprintf(inf_st->File, "\t\tElements:\n");   
 
         for (int i = 0; i < stack_ptr->size; ++i) {
             FPrintElem(stack_ptr->size, i, stack_ptr->data[i], inf_st->File);
