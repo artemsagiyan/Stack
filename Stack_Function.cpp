@@ -146,7 +146,7 @@ void PrintElem(char elem) {
 
 void FPrintElem(int size, int num, int elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
-    fprintf(file, "\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -157,7 +157,7 @@ void FPrintElem(int size, int num, int elem, FILE *file) {
 void FPrintElem(int size, int num, double elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
     
-    fprintf(file, "\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -167,7 +167,7 @@ void FPrintElem(int size, int num, double elem, FILE *file) {
 
 void FPrintElem(int size, int num, char elem, FILE *file) {
     int count_ent = CountEnt(size) - CountEnt(num);
-    fprintf(file, "\t\t\t*[%d] ", num);
+    fprintf(file, "\t\t*[%d] ", num);
 
     for(int i = 0; i < count_ent; ++i) {
         fprintf(file, " ");
@@ -202,8 +202,8 @@ int IsReadBadPtr(Stack_t *ptr) {
 }
 
 void PrintCanary(const Stack *stack_ptr, INFO_STACK, int canary) {
-    fprintf(inf_st->File, "\t\t\t*[C_1] = %d (CANARY)\n", stack_ptr->stack_front_canary[0]);
-    fprintf(inf_st->File, "\t\t\t*[C_2] = %d (CANARY)\n", stack_ptr->stack_back_canary[0]);
+    fprintf(inf_st->File, "\t\t*[C_1] = %d (CANARY)\n", stack_ptr->stack_front_canary[0]);
+    fprintf(inf_st->File, "\t\t*[C_2] = %d (CANARY)\n", stack_ptr->stack_back_canary[0]);
     fprintf(inf_st->File, "\n");
 }
 

@@ -44,11 +44,14 @@
         fprintf(inf_st->File, "\t\tCapacity: %d\n",  stack_ptr->capacity);                          \
         fprintf(inf_st->File, "\t\tData [%p]\n\n" ,  stack_ptr->data);                              \
                                                                                                     \
-        fprintf(inf_st->File, "\t\tElements:\n");                                               \
+        fprintf(inf_st->File, "\t\tElements:\n");                                                   \
                                                                                                     \
-                for (int i = 0; i <= stack_ptr->size; ++i) {                                        \
-                    FPrintElem(stack_ptr->capacity, i, stack_ptr->data[i], inf_st->File);           \
-                }                                                                                   \
+        if (stack_ptr->size == 0)                                                                   \
+            fprintf(inf_st->File, "\t\tThere aren't elements\n");                                   \
+                                                                                                    \
+        for (int i = 0; i <= stack_ptr->size; ++i) {                                                \
+            FPrintElem(stack_ptr->capacity, i, stack_ptr->data[i], inf_st->File);                   \
+        }                                                                                           \
         PrintCanary(stack_ptr, inf_st, canary);                                                     \
         fprintf(inf_st->File, "\n");                                                                \
         fprintf(inf_st->File, "ALL ELEMENTS HAVE FIILED IN POISON\n******************************"  \
