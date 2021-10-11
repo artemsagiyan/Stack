@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
    StackCtor(&st, &inf_st);
 
-   for (int i = 0; i < 10; ++i) {
+   for (int i = 0; i < 100; ++i) {
         StackPush(&st, sqrt(i), &inf_st);
     }         
 

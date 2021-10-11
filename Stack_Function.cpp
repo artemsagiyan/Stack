@@ -15,24 +15,21 @@ int StackCtor(Stack *stack_ptr, INFO_STACK){
 
     stack_ptr->size     = 0;
     stack_ptr->capacity = 0;
-
-    char *new_data = (char *)calloc((stack_ptr->capacity + 1) * sizeof(Stack_t), sizeof(char));
     
-    int mem = sizeof(Canary_t) * sizeof(char);
-    char    *new_canary_data_front = new_data - mem;
-             new_canary_data_front = (char *)calloc(1, mem);
-    char    *new_canary_data_back  = new_data + stack_ptr->capacity;
-             new_canary_data_back  = (char *)calloc(1, mem);
+    int mem = 0;
     
-    stack_ptr->stack_front_canary = (Canary_t *)new_canary_data_front;
-    stack_ptr->stack_back_canary  = (Canary_t *)new_canary_data_back;
+    #ifndef CANARY_TURN
+    mem = 2 * sizeof(Canary_t);
+    #endif
 
-    set_canary
+    char *new_data = (char *)calloc((stack_ptr->capacity + 1) * sizeof(Stack_t) + mem, sizeof(char));
 
     stack_ptr->data = (Stack_t *)(new_data);
     if (stack_ptr->data == NULL) inf_st->error = MEM_ERROR;
 
+    #ifndef HASH_TURN
     stack_ptr->hash = StackHashLy(stack_ptr);
+    #endif
 
     ASSERT_OK(stack_ptr, inf_st);
 
@@ -49,27 +46,31 @@ int StackPush(Stack *stack_ptr, Stack_t value, INFO_STACK){
 
     stack_ptr->data[stack_ptr->size++] = value;
 
+    #ifndef HASH_TURN
     stack_ptr->hash = StackHashLy(stack_ptr);
-    
+    #endif
+
     ASSERT_OK(stack_ptr, inf_st)
 
     return NO_ERROR;
 }
 
 int StackPop(Stack *stack_ptr, INFO_STACK) {
-    
+
     ASSERT_OK(stack_ptr, inf_st)
 
-    Stack_t value = stack_ptr->data[stack_ptr->size--];
-    stack_ptr->data[stack_ptr->size + 1] = 666;
+    Stack_t value = stack_ptr->data[--stack_ptr->size];
+    stack_ptr->data[stack_ptr->size] = 666;
 
     if(stack_ptr->size <= stack_ptr->capacity / 4) {
-        StackResize(stack_ptr, stack_ptr->capacity + 1, inf_st);
-        memset((stack_ptr->data + stack_ptr->capacity + 1), (int)666, 
+        StackResize(stack_ptr, stack_ptr->capacity / 4 + 1, inf_st);
+        memset((stack_ptr->data + stack_ptr->size + 1), (int)666, 
               ((stack_ptr->capacity * 3) / 4 + 1));
     }
 
+    #ifndef HASH_TURN
     stack_ptr->hash = StackHashLy(stack_ptr);
+    #endif
 
     ASSERT_OK(stack_ptr, inf_st)
 
@@ -90,9 +91,12 @@ int StackResize(Stack *stack_ptr, int new_capacity, INFO_STACK){
     
     stack_ptr->capacity = new_capacity;
 
-    set_canary
+    memset(stack_ptr->data + stack_ptr->size, (Stack_t)666,
+              (stack_ptr->capacity - stack_ptr->size));
 
+    #ifndef HASH_TURN
     stack_ptr->hash = StackHashLy(stack_ptr);
+    #endif
 
     ASSERT_OK(stack_ptr, inf_st)
 
@@ -105,21 +109,15 @@ void StackDtor(Stack *stack_ptr, INFO_STACK) {
 
     memset(stack_ptr->data, (Stack_t)666, 
            stack_ptr->capacity);
-    memset(stack_ptr->stack_back_canary, 
-          (Canary_t)666, sizeof(Canary_t));
-    memset(stack_ptr->stack_front_canary, 
-          (Canary_t)666, sizeof(Canary_t));
 
     free  (stack_ptr->data);
-    free  (stack_ptr->stack_back_canary);
-    free  (stack_ptr->stack_front_canary);
-
-
-    stack_ptr->stack_back_canary  = (Canary_t *)13;
-    stack_ptr->stack_front_canary = (Canary_t *)13;    
+ 
     stack_ptr->data               = (Stack_t *) 13;
     stack_ptr->size               =             -1;
     stack_ptr->capacity           =             -1;
+    #ifndef HASH_TURN
+    stack_ptr->hash               =            666;
+    #endif
 
     fclose(inf_st->File);
 }
@@ -128,7 +126,7 @@ void StackPrint(const Stack stack, INFO_STACK) {
     
     ASSERT_OK((Stack *)&stack, inf_st)
 
-    for (int i = 0; i <= stack.capacity + 1; ++i) {
+    for (int i = 0; i < stack.size; ++i) {
         PrintElem(stack.data[i]);
     }
     printf("\n");
@@ -183,13 +181,12 @@ int StackOk(const Stack *stack_ptr, INFO_STACK) {
     CheckError(stack_ptr->size     < 0          ,     NEGATIVE_SIZE_STACK   );
     CheckError(stack_ptr->capacity < 
                stack_ptr->size                  ,     CAPACITY_LOW_THEN_SIZE);
-    CheckError(stack_ptr->canary_back  !=
-               stack_ptr->stack_back_canary[0]  ,     INVALID_BACK_CANARY   );
-    CheckError(stack_ptr->canary_front !=
-               stack_ptr->stack_front_canary[0] ,     INVALID_FRONT_CANARY  );
+    
+    #ifndef HASH_TURN
     CheckError(stack_ptr->hash         !=
                StackHashLy(stack_ptr)           ,     INVALID_HASH_KEY      );
-    
+    #endif
+
     //CheckError(IsReadBadPtr(stack_ptr->data),   INVALID_PTR           );
     return NO_ERROR;
 }
@@ -200,16 +197,19 @@ int IsReadBadPtr(Stack_t *ptr) {
     if(res < 0) return FAILED_PTR;
     return 0;
 }
-
+#ifndef CANARY_TURN
 void PrintCanary(const Stack *stack_ptr, INFO_STACK, int canary) {
-    fprintf(inf_st->File, "\t\t*[C_1] = %d (CANARY)\n", stack_ptr->stack_front_canary[0]);
-    fprintf(inf_st->File, "\t\t*[C_2] = %d (CANARY)\n", stack_ptr->stack_back_canary[0]);
+    fprintf(inf_st->File, "\t\t*[C_1] = %d (CANARY)\n", stack_ptr->canary_front);
+    fprintf(inf_st->File, "\t\t*[C_2] = %d (CANARY)\n", stack_ptr->canary_back);
     fprintf(inf_st->File, "\n");
 }
+#endif
 
 void StackDump(const Stack *stack_ptr, INFO_STACK) {
 
+    #ifndef CANARY_TURN
     Stack_t canary = 1;
+    #endif
 
     if(inf_st->error == NO_ERROR) {
 
@@ -235,7 +235,9 @@ void StackDump(const Stack *stack_ptr, INFO_STACK) {
 
         fprintf(inf_st->File, "\n");
 
+        #ifndef CANARY_TURN
         PrintCanary(stack_ptr, inf_st, canary);
+        #endif
         
         fprintf(inf_st->File, "ALL ELEMENTS HAVE FIILED IN POISON\n******************************"
         "************************************************************\n");
@@ -294,17 +296,7 @@ int CountEnt(int num) {
 
     return i;
 }
-
-void  SetCanary(Stack *stack_ptr, INFO_STACK) {
-    
-    ASSERT_OK(stack_ptr, inf_st)
-
-    srandom(time(NULL));
-
-    stack_ptr->stack_back_canary[0]  = stack_ptr->canary_back  = random();
-    stack_ptr->stack_front_canary[0] = stack_ptr->canary_front = random();
-}
-
+#ifndef HASH_TURN
 Hash_t StackHashLy(const Stack *stack_ptr) {
 
     Hash_t hash = 0;
@@ -341,6 +333,7 @@ Hash_t StackHashLy(const Stack *stack_ptr) {
 
     return hash;
 }
+#endif
 
 #undef Stack_t
 #undef Canary_t

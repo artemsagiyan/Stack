@@ -1,22 +1,28 @@
 #include <stdio.h>
+#include <ctime>
+
+//#define CANARY_TURN
+
+//#define STACK_TYPE
+
+//#define HASH_TURN
 
 #ifndef Stack_t
-#define Stack_t double
+#define Stack_t int
 #endif
 
-#ifndef Canary_t
+#ifndef CANARY_TURN
 #define Canary_t int
+  const Canary_t canary = 0xDFFDFFFD;
 #endif
 
-#ifndef Hash_t
+#ifndef HASH_TURN
 #define Hash_t unsigned long int
 #endif
 
 #ifndef LOG_FILE_NAME
-    #define LOG_FILE_NAME  "LogStack.txt"      
+#define LOG_FILE_NAME  "LogStack.txt"      
 #endif
-
-#define set_canary SetCanary(stack_ptr, inf_st);
 
 #define str(type_first) #type_first
 #define type_str(type) str(type)
@@ -33,6 +39,15 @@
 //HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO0000=
 //============================================================================================
 //ERROR_VERSION_STACK_DUMP
+
+#ifndef CANARY_TURN
+#define PrintCan PrintCanary(stack_ptr, inf_st, canary);
+#endif
+
+#ifdef CANARY_TURN
+#define PrintCan //not output canaries
+#endif
+
 #define CASE(ERROR) fprintf(inf_st->File, "\n******************************"                        \
         "************************************************************\n");                          \
                                                                                                     \
@@ -52,7 +67,7 @@
         for (int i = 0; i <= stack_ptr->size; ++i) {                                                \
             FPrintElem(stack_ptr->capacity, i, stack_ptr->data[i], inf_st->File);                   \
         }                                                                                           \
-        PrintCanary(stack_ptr, inf_st, canary);                                                     \
+        PrintCan                                                                                    \
         fprintf(inf_st->File, "\n");                                                                \
         fprintf(inf_st->File, "ALL ELEMENTS HAVE FIILED IN POISON\n******************************"  \
         "************************************************************\n");
@@ -72,17 +87,35 @@
  * @param [in] canary_front         - Front canary
  * @param [in] canary_back          - Back  canary            
  */
+
+#ifndef CANARY_TURN
+#define CANARY_FRONT const Canary_t canary_front = canary;
+#endif
+
+#ifdef CANARY_TURN
+#define CANARY_FRONT //NOT CANARIES
+#endif
+
+#ifndef CANARY_TURN
+#define CANARY_BACK const Canary_t canary_back = canary;
+#endif
+
+#ifdef CANARY_TURN
+#define CANARY_BACK //NOT CANARIES
+#endif
+
 struct Stack {
+    CANARY_FRONT
+
     int      capacity;
     int      size;
     Stack_t  *data;
-    //////////////////////
-    Canary_t *stack_front_canary;
-    Canary_t canary_front;
-    Canary_t *stack_back_canary;
-    Canary_t canary_back;
-    //////////////////////
-    Hash_t hash;
+
+    #ifndef HASH_TURN
+        Hash_t hash;
+    #endif
+
+    CANARY_BACK
 };
 
 //============================================================================================
@@ -124,10 +157,7 @@ enum errors {
     MEM_ERROR                   =    101,
     REALLOC_ERROR               =    102,
     NOT_OPEN_FILE               =    103,
-
-    INVALID_BACK_CANARY         =    701,
-    INVALID_FRONT_CANARY        =    702,
-    INVALID_HASH_KEY            =    703,
+    INVALID_HASH_KEY            =    104,
 
     NOT_MEM_STACK               =    201,
     NULL_SIZE_CAPACITY          =    202,
@@ -137,7 +167,9 @@ enum errors {
     INVALID_PTR_STACK           =    206,
     INVALID_PTR_DATA            =    207,
     CAPACITY_LOW_THEN_SIZE      =    208,
-    FAILED_PTR                  =    209
+    FAILED_PTR                  =    209,
+
+    DIV_NONE                    =   1001
 
 };
 
@@ -297,6 +329,7 @@ int   CountEnt          (int num);
 //HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO0000=
 //============================================================================================
 
+#ifndef CANARY_TURN
 /**************************************************************
  * @brief Set the Canary object
  * 
@@ -315,11 +348,11 @@ void  SetCanary         (Stack *stack_ptr, INFO_STACK);
  * @param canary          [in]  - Value of canary
  */
 void  PrintCanary       (const Stack *stack_ptr, INFO_STACK, Canary_t canary);
-
+#endif
 //============================================================================================
 //HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO0000=
 //============================================================================================
-
+#ifndef HASH_TURN
 /***************************************************************
  * @brief Make hash keys
  * 
@@ -328,3 +361,4 @@ void  PrintCanary       (const Stack *stack_ptr, INFO_STACK, Canary_t canary);
  * @return                [out] - Hash key
  */
 Hash_t StackHashLy      (const Stack *stack_ptr);
+#endif
